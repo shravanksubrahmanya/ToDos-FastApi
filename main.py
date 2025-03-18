@@ -8,10 +8,13 @@ import models
 from database import engine, session_local
 from typing import Annotated, Optional
 from models import ToDoModel
+from routers import auth
 
 app = FastAPI()
 
 models.base.metadata.create_all(bind=engine)
+
+app.include_router(auth.router)
 
 def get_db():
     db = session_local()
