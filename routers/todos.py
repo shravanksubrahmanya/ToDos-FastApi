@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from database import session_local
 from typing import Annotated
 from models import ToDoModel
+from .auth import get_current_user
 
 router = APIRouter()
 
@@ -21,6 +22,7 @@ def get_db():
         db.close()
 
 db_dependency = Annotated[Session, Depends(get_db)]
+user_dependency = Annotated[dict, Depends(get_current_user)]
 
 class TodoRequest(BaseModel):
     title: str = Field(min_length=3)
@@ -40,8 +42,10 @@ async def read_todo(db: db_dependency, todo_id: int = Path(gt=0, title="The ID o
     raise HTTPException(status_code=404, detail="Todo not found")
 
 @router.post("/todo", status_code=status.HTTP_201_CREATED)
-async def create_todo(db:db_dependency, todo_request: TodoRequest):
-    todo_model = ToDoModel(**todo_request.model_dump())
+async def create_todo(user: user_dependency, db:db_dependency, todo_request: TodoRequest):
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication Failed")
+    todo_model = ToDoModel(**todo_request.model_dump(), owner_id = user.get('id'))
     db.add(todo_model) #getting database ready
     db.commit() # actually doing the transaction to the database
 
