@@ -31,12 +31,18 @@ class TodoRequest(BaseModel):
     complete: bool = False
 
 @router.get("/", status_code=status.HTTP_200_OK)
-async def read_all(db: db_dependency): # Depends => dependency injection -> we need to do something before we run the function
-    return db.query(ToDoModel).all()
+async def read_all(user: user_dependency, db: db_dependency): # Depends => dependency injection -> we need to do something before we run the function
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication Failed")
+    return db.query(ToDoModel).filter(ToDoModel.owner_id == user.get('user_id')).all()
 
 @router.get("/todo/{todo_id}", status_code=status.HTTP_200_OK)
-async def read_todo(db: db_dependency, todo_id: int = Path(gt=0, title="The ID of the todo")):
-    todo_model = db.query(ToDoModel).filter(ToDoModel.id == todo_id).first()
+async def read_todo(user:user_dependency, db: db_dependency, todo_id: int = Path(gt=0, title="The ID of the todo")):
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication Failed")
+    todo_model = db.query(ToDoModel)\
+        .filter(ToDoModel.owner_id == user.get('user_id'))\
+        .filter(ToDoModel.id == todo_id).first()
     if todo_model is not None:
         return todo_model
     raise HTTPException(status_code=404, detail="Todo not found")
@@ -45,7 +51,7 @@ async def read_todo(db: db_dependency, todo_id: int = Path(gt=0, title="The ID o
 async def create_todo(user: user_dependency, db:db_dependency, todo_request: TodoRequest):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
-    todo_model = ToDoModel(**todo_request.model_dump(), owner_id = user.get('id'))
+    todo_model = ToDoModel(**todo_request.model_dump(), owner_id = user.get('user_id'))
     db.add(todo_model) #getting database ready
     db.commit() # actually doing the transaction to the database
 
