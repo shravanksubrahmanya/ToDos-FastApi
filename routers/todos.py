@@ -56,10 +56,15 @@ async def create_todo(user: user_dependency, db:db_dependency, todo_request: Tod
     db.commit() # actually doing the transaction to the database
 
 @router.put("/todo/{todo_id}", status_code=status.HTTP_200_OK)
-async def update_todo(db:db_dependency,
+async def update_todo(user: user_dependency,
+                      db:db_dependency,
                       todo_request: TodoRequest,
                       todo_id:int = Path(gt=0, title="The ID of the todo")):
-    todo_model = db.query(ToDoModel).filter(ToDoModel.id == todo_id).first()
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication Failed")
+    todo_model = db.query(ToDoModel)\
+        .filter(ToDoModel.owner_id == user.get('user_id'))\
+        .filter(ToDoModel.id == todo_id).first()
     if todo_model is None:
         raise HTTPException(status_code=404, detail="Todo not found")
     todo_model.title = todo_request.title
@@ -71,8 +76,12 @@ async def update_todo(db:db_dependency,
     db.commit()
 
 @router.delete("/todo/{todo_id}", status_code=status.HTTP_200_OK)
-async def delete_todo(db: db_dependency, todo_id: int = Path(gt=0, title="The ID of the todo")):
-    todo_model = db.query(ToDoModel).filter(ToDoModel.id == todo_id).first()
+async def delete_todo(user: user_dependency, db: db_dependency, todo_id: int = Path(gt=0, title="The ID of the todo")):
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication Failed")
+    todo_model = db.query(ToDoModel)\
+        .filter(ToDoModel.owner_id == user.get('user_id'))\
+        .filter(ToDoModel.id == todo_id).first()
     if todo_model is None:
         raise HTTPException(status_code=404, detail="Todo not found")
     db.delete(todo_model)
