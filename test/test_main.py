@@ -1,6 +1,6 @@
 from starlette.testclient import TestClient
 from starlette import status
-from ToDos.main import app
+from ..main import app
 
 client = TestClient(app)
 

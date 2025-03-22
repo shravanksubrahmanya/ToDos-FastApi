@@ -10,8 +10,8 @@ from models import ToDoModel
 from .auth import get_current_user
 
 router = APIRouter(
-    prefix="/todos",
-    tags=["todos"]
+    # prefix="/todos",
+    # tags=["todos"]
 )
 
 def get_db():
@@ -58,7 +58,7 @@ async def create_todo(user: user_dependency, db:db_dependency, todo_request: Tod
     db.add(todo_model) #getting database ready
     db.commit() # actually doing the transaction to the database
 
-@router.put("/todo/{todo_id}", status_code=status.HTTP_200_OK)
+@router.put("/todo/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def update_todo(user: user_dependency,
                       db:db_dependency,
                       todo_request: TodoRequest,
@@ -78,7 +78,7 @@ async def update_todo(user: user_dependency,
     db.add(todo_model)
     db.commit()
 
-@router.delete("/todo/{todo_id}", status_code=status.HTTP_200_OK)
+@router.delete("/todo/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_todo(user: user_dependency, db: db_dependency, todo_id: int = Path(gt=0, title="The ID of the todo")):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
