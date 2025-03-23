@@ -1,120 +1,174 @@
-# ToDo Application using FastAPI and SQLite3
+# Full Stack ToDo Application
 
-This repository contains a backend API for a ToDo application built using FastAPI and SQLite3. The application allows users to manage their to-do tasks with features such as creating, reading, updating, and deleting tasks. The application also includes authentication and authorization mechanisms to ensure secure access to the API.
+This repository contains a full-stack ToDo application with a FastAPI backend and a modern frontend. The application allows users to manage their to-do tasks with features such as creating, reading, updating, and deleting tasks, along with user authentication and authorization.
+
+## Project Structure
+
+The project is divided into two main parts:
+
+- **Backend**: FastAPI + SQLite3 (in `Backend/` directory)
+- **Frontend**: React + Vite application (in `ToDos-Frontend/` directory)
 
 ## Features
 
-- **User Authentication and Authorization**: Secure login and access control for users.
-- **CRUD Operations for ToDos**: Create, read, update, and delete to-do tasks.
-- **SQLite3 Database**: Lightweight and easy-to-use database for storing user and to-do data.
-- **Dependency Injection**: Utilizes FastAPI's dependency injection for database sessions and user authentication.
+- **User Authentication and Authorization**: Secure login and access control for users
+- **CRUD Operations for ToDos**: Create, read, update, and delete to-do tasks
+- **Responsive UI**: Modern and user-friendly interface
+- **SQLite3 Database**: Lightweight database for storing user and to-do data
+- **REST API**: Well-structured API endpoints for frontend-backend communication
 
-## Packages Used
+## Backend Technologies
 
-- **FastAPI**: Web framework for building APIs with Python 3.7+.
-- **SQLAlchemy**: SQL toolkit and Object-Relational Mapping (ORM) library.
-- **SQLite3**: Database engine.
-- **Pydantic**: Data validation and settings management using Python type annotations.
-- **pytest**: Testing framework for Python.
-- **bcrypt**: Library for hashing passwords.
+- **FastAPI**: Web framework for building APIs with Python 3.7+
+- **SQLAlchemy**: SQL toolkit and Object-Relational Mapping (ORM) library
+- **SQLite3**: Database engine
+- **Pydantic**: Data validation using Python type annotations
+- **pytest**: Testing framework
+- **bcrypt**: Password hashing library
 
-## Installation
+## Frontend Technologies
 
-1. **Clone the repository**:
-    ```bash
-    git clone https://github.com/shravanksubrahmanya/ToDos-FastApi.git
-    cd ToDos-FastApi
-    ```
+- **React**: Frontend library
+- **Vite**: Build tool and development server
+- **TailwindCSS**: Utility-first CSS framework
+- **Material-UI**: UI component library
+- **JWT**: Token-based authentication
+
+## Installation and Setup
+
+### Backend Setup
+
+1. **Navigate to backend directory**:
+
+   ```bash
+   cd Backend
+   ```
 
 2. **Create a virtual environment**:
-    ```bash
-    python -m venv .venv
-    ```
+
+   ```bash
+   python -m venv .venv
+   ```
 
 3. **Activate the virtual environment**:
-    - On Windows:
-        ```bash
-        .venv\Scripts\activate
-        ```
-    - On macOS/Linux:
-        ```bash
-        source .venv/bin/activate
-        ```
 
-4. **Install the required packages**:
-    ```bash
-    pip install -r requirements.txt
-    ```
+   - Windows:
+     ```bash
+     .venv\Scripts\activate
+     ```
+   - macOS/Linux:
+     ```bash
+     source .venv/bin/activate
+     ```
+
+4. **Install backend dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### Frontend Setup
+
+1. **Navigate to frontend directory**:
+
+   ```bash
+   cd ToDos-Frontend
+   ```
+
+2. **Install frontend dependencies**:
+   ```bash
+   npm install
+   ```
 
 ## Running the Application
 
-1. **Start the FastAPI server**:
-    ```bash
-    uvicorn main:app --reload
-    ```
+### Start Backend Server
 
-2. **Access the API documentation**:
-    - Open your browser and navigate to `http://127.0.0.1:8000/docs` for the interactive Swagger UI.
-    - Alternatively, visit `http://127.0.0.1:8000/redoc` for the ReDoc documentation.
+1. **From the backend directory**:
+   ```bash
+   uvicorn main:app --reload
+   ```
+2. **Access backend API docs**:
+   - Swagger UI: `http://127.0.0.1:8000/docs`
+   - ReDoc: `http://127.0.0.1:8000/redoc`
 
-## Running Tests
+### Start Frontend Development Server
 
-1. **Run the tests using pytest**:
-    ```bash
-    pytest
-    ```
+1. **From the frontend directory**:
+   ```bash
+   npm run dev
+   ```
+2. **Access the application**:
+   - Open `http://localhost:5173` in your browser
 
 ## API Endpoints
 
 ### Authentication
 
 - **Login**: `POST /token`
-    - Request: `{ "username": "user", "password": "password" }`
-    - Response: `{ "access_token": "token", "token_type": "bearer" }`
+- **Register**: `POST /users/`
 
 ### ToDo Management
 
 - **Get All ToDos**: `GET /todos/`
 - **Get ToDo by ID**: `GET /todos/todo/{todo_id}`
 - **Create ToDo**: `POST /todos/todo`
-    - Request: `{ "title": "New Todo", "description": "Description", "priority": 1, "complete": false }`
 - **Update ToDo**: `PUT /todos/todo/{todo_id}`
-    - Request: `{ "title": "Updated Title", "description": "Updated Description", "priority": 2, "complete": true }`
 - **Delete ToDo**: `DELETE /todos/todo/{todo_id}`
 
-## Authentication and Authorization
+## Testing
 
-The application uses JWT (JSON Web Tokens) for authentication. Users must log in to receive an access token, which must be included in the `Authorization` header of subsequent requests to protected endpoints.
-
-### Example
+### Backend Tests
 
 ```bash
-curl -X 'POST' \
-  'http://127.0.0.1:8000/token' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "username": "user",
-  "password": "password"
-}'
+cd backend
+pytest
 ```
 
-Include the received token in the Authorization header for protected endpoints:
+### Frontend Tests
+
+Frontend tests have not been implemented yet. They will be added in future updates to include:
+
+- Unit tests with Jest
+- Component testing with React Testing Library
+- Integration tests for API interactions
+- End-to-end testing with Cypress
+
+To run the existing application:
+
+1. **Start the backend server**:
+
 ```bash
-curl -X 'GET' \
-  'http://127.0.0.1:8000/todos/' \
-  -H 'Authorization: Bearer <access_token>'
+cd backend
+uvicorn main:app --reload
 ```
 
-### Database
-The application uses SQLite3 as the database engine. The database schema is defined using SQLAlchemy ORM models.
+2. **Start the frontend development server**:
 
+```bash
+cd frontend
+npm run dev
+```
 
-### What Users Can Do
-* ***Register and Log In:*** Users can register and log in to the application.
-* ***Manage ToDos:*** Authenticated users can create, read, update, and delete their to-do tasks.
+## Authentication Flow
 
-### Repository URL
-For more information and to view the source code, visit the GitHub repository.
+1. Users register/login through the frontend interface
+2. Backend validates credentials and returns JWT token
+3. Frontend stores token in local storage
+4. Token is included in subsequent API requests
+
+## Development
+
+- Backend runs on `http://127.0.0.1:8000`
+- Frontend runs on `http://localhost:5173`
+- API requests from frontend to backend are handled through the Fetch API
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a new Pull Request
 
 ## License
 
