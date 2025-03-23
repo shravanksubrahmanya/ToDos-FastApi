@@ -110,4 +110,21 @@ export const api = {
 
     return response.json();
   },
+
+  changePassword: async (token, passwordData) => {
+    const response = await fetch(`${BASE_URL}/users/change-password/`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(passwordData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to change password");
+    }
+
+    return response.status === 204;
+  },
 };

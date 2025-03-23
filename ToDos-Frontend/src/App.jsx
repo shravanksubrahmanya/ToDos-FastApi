@@ -9,12 +9,14 @@ import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
 import BadgeIcon from "@mui/icons-material/Badge";
 import WorkIcon from "@mui/icons-material/Work";
+import ChangePassword from "./components/ChangePassword";
 
 function App() {
   const [todos, setTodos] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [openUserInfo, setOpenUserInfo] = useState(false);
+  const [openChangePassword, setOpenChangePassword] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -127,8 +129,32 @@ function App() {
                   </div>
                 </div>
               )}
+
+              <Divider sx={{ my: 2 }} />
+
+              <div className="flex justify-center mt-4">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    setOpenChangePassword(true);
+                    setOpenUserInfo(false);
+                  }}
+                >
+                  Change Password
+                </Button>
+              </div>
             </Box>
           </Modal>
+
+          {/* Add Change Password Modal */}
+          <ChangePassword
+            open={openChangePassword}
+            onClose={() => {
+              setOpenChangePassword(false);
+              setOpenUserInfo(true);
+            }}
+          />
         </main>
       ) : (
         <div className="flex-grow flex items-center justify-center">
