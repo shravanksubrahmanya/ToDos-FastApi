@@ -77,6 +77,11 @@ export const api = {
       },
       body: JSON.stringify(todoData),
     });
+
+    if (!response.ok) {
+      throw new Error("Failed to update todo");
+    }
+
     return response.status === 204;
   },
 

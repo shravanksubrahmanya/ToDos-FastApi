@@ -1,16 +1,24 @@
 import React, { useState } from "react";
 import {
   Button,
-  TextField,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  TextField,
+  IconButton,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import { api } from "../services/api";
 
 function Todos({ todos, setTodos, refreshTodos }) {
   const [openNewTodo, setOpenNewTodo] = useState(false);
+  const [openEditTodo, setOpenEditTodo] = useState(false);
+  const [editingTodo, setEditingTodo] = useState(null);
   const [newTodo, setNewTodo] = useState({
     title: "",
     description: "",
@@ -61,6 +69,23 @@ function Todos({ todos, setTodos, refreshTodos }) {
       setTodos(todos.filter((t) => t.id !== todoId));
     } catch (error) {
       console.error("Failed to delete todo:", error);
+    }
+  };
+
+  const handleEditClick = (todo) => {
+    setEditingTodo(todo);
+    setOpenEditTodo(true);
+  };
+
+  const handleEditSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await api.updateTodo(token, editingTodo.id, editingTodo);
+      await refreshTodos();
+      setOpenEditTodo(false);
+      setEditingTodo(null);
+    } catch (error) {
+      console.error("Failed to update todo:", error);
     }
   };
 
@@ -118,6 +143,54 @@ function Todos({ todos, setTodos, refreshTodos }) {
         </DialogActions>
       </Dialog>
 
+      {/* Edit Todo Modal */}
+      <Dialog open={openEditTodo} onClose={() => setOpenEditTodo(false)}>
+        <DialogTitle>Edit Todo</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="Title"
+            value={editingTodo?.title || ""}
+            onChange={(e) =>
+              setEditingTodo({ ...editingTodo, title: e.target.value })
+            }
+            margin="normal"
+          />
+          <TextField
+            fullWidth
+            label="Description"
+            value={editingTodo?.description || ""}
+            onChange={(e) =>
+              setEditingTodo({ ...editingTodo, description: e.target.value })
+            }
+            margin="normal"
+            multiline
+            rows={4}
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Priority</InputLabel>
+            <Select
+              value={editingTodo?.priority || 1}
+              onChange={(e) =>
+                setEditingTodo({ ...editingTodo, priority: e.target.value })
+              }
+              label="Priority"
+            >
+              <MenuItem value={1}>Low</MenuItem>
+              <MenuItem value={2}>Medium</MenuItem>
+              <MenuItem value={3}>High</MenuItem>
+              <MenuItem value={4}>Critical</MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenEditTodo(false)}>Cancel</Button>
+          <Button onClick={handleEditSave} variant="contained" color="primary">
+            Save Changes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {todos && todos.length > 0 ? (
         <ul className="space-y-4">
           {todos.map((todo) => (
@@ -133,6 +206,13 @@ function Todos({ todos, setTodos, refreshTodos }) {
                 </span>
               </div>
               <div className="flex space-x-2">
+                <IconButton
+                  onClick={() => handleEditClick(todo)}
+                  color="primary"
+                  size="small"
+                >
+                  <EditIcon />
+                </IconButton>
                 <Button
                   variant="outlined"
                   color={todo.complete ? "success" : "primary"}
