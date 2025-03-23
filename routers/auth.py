@@ -2,8 +2,6 @@ from fastapi.exceptions import HTTPException
 from fastapi import APIRouter
 from pydantic import BaseModel
 from passlib.context import CryptContext
-from sqlalchemy.sql.operators import from_
-from sqlalchemy.util import deprecated
 from starlette import status
 from sqlalchemy.orm import Session
 from fastapi.params import Depends
