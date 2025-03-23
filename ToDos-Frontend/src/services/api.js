@@ -89,4 +89,20 @@ export const api = {
     });
     return response.status === 204;
   },
+
+  getUserInfo: async (token) => {
+    const response = await fetch(`${BASE_URL}/users/user`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user info");
+    }
+
+    return response.json();
+  },
 };
