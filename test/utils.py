@@ -14,7 +14,6 @@ from database import base
 from models import ToDoModel
 from main import app
 
-
 TEST_SQL_ALCHEMY_DATABASE_URL = "sqlite:///./testdb.db"
 
 engine = create_engine(TEST_SQL_ALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool)
