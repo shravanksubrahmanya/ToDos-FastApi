@@ -10,8 +10,8 @@ from models import ToDoModel
 from .auth import get_current_user
 
 router = APIRouter(
-    # prefix="/todos",
-    # tags=["todos"]
+    prefix="/todos",
+    tags=["todos"]
 )
 
 def get_db():
