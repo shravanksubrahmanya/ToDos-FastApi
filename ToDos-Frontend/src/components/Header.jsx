@@ -6,10 +6,12 @@ import {
   TextField,
   Typography,
   Alert,
+  IconButton,
 } from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { api } from "../services/api";
 
-function Header({ isAuthenticated, setIsAuthenticated }) {
+function Header({ isAuthenticated, setIsAuthenticated, onShowUserInfo }) {
   const [openSignIn, setOpenSignIn] = useState(false);
   const [openSignUp, setOpenSignUp] = useState(false);
   const [error, setError] = useState("");
@@ -118,17 +120,28 @@ function Header({ isAuthenticated, setIsAuthenticated }) {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold">ToDos</h1>
         <nav>
-          <ul className="flex space-x-6">
+          <ul className="flex space-x-6 items-center">
             {isAuthenticated ? (
-              <li>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </Button>
-              </li>
+              <>
+                <li>
+                  <IconButton
+                    color="inherit"
+                    onClick={onShowUserInfo}
+                    className="hover:text-gray-300"
+                  >
+                    <AccountCircleIcon />
+                  </IconButton>
+                </li>
+                <li>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Button>
+                </li>
+              </>
             ) : (
               <>
                 <Button

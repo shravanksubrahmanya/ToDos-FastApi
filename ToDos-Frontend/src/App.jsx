@@ -4,7 +4,11 @@ import Header from "./components/Header";
 import Todos from "./components/Todos";
 import Footer from "./components/Footer";
 import { api } from "./services/api";
-import { Button, Modal, Box, Typography } from "@mui/material";
+import { Button, Modal, Box, Typography, Avatar, Divider } from "@mui/material";
+import PersonIcon from "@mui/icons-material/Person";
+import EmailIcon from "@mui/icons-material/Email";
+import BadgeIcon from "@mui/icons-material/Badge";
+import WorkIcon from "@mui/icons-material/Work";
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -62,18 +66,11 @@ function App() {
       <Header
         isAuthenticated={isAuthenticated}
         setIsAuthenticated={setIsAuthenticated}
+        onShowUserInfo={handleShowUserInfo}
       />
       {isAuthenticated ? (
         <main className="flex-grow">
           <div className="container mx-auto px-4 py-4">
-            <Button
-              variant="contained"
-              color="info"
-              onClick={handleShowUserInfo}
-              className="mb-4"
-            >
-              Show User Info
-            </Button>
             <Todos
               todos={todos}
               setTodos={setTodos}
@@ -84,26 +81,50 @@ function App() {
           {/* User Info Modal */}
           <Modal open={openUserInfo} onClose={() => setOpenUserInfo(false)}>
             <Box sx={modalStyle}>
-              <Typography variant="h6" component="h2" gutterBottom>
-                User Information
-              </Typography>
+              <div className="flex flex-col items-center mb-6">
+                <Avatar
+                  sx={{ width: 80, height: 80, bgcolor: "primary.main", mb: 2 }}
+                >
+                  {userInfo?.first_name?.[0]}
+                  {userInfo?.last_name?.[0]}
+                </Avatar>
+                <Typography variant="h5" component="h2" gutterBottom>
+                  {userInfo?.first_name} {userInfo?.last_name}
+                </Typography>
+              </div>
+
+              <Divider sx={{ my: 2 }} />
+
               {userInfo && (
-                <div>
-                  <Typography>
-                    <strong>Username:</strong> {userInfo.username}
-                  </Typography>
-                  <Typography>
-                    <strong>Email:</strong> {userInfo.email}
-                  </Typography>
-                  <Typography>
-                    <strong>First Name:</strong> {userInfo.first_name}
-                  </Typography>
-                  <Typography>
-                    <strong>Last Name:</strong> {userInfo.last_name}
-                  </Typography>
-                  <Typography>
-                    <strong>Role:</strong> {userInfo.role}
-                  </Typography>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <PersonIcon color="primary" />
+                    <Typography>
+                      <strong>Username:</strong> {userInfo.username}
+                    </Typography>
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <EmailIcon color="primary" />
+                    <Typography>
+                      <strong>Email:</strong> {userInfo.email}
+                    </Typography>
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <BadgeIcon color="primary" />
+                    <Typography>
+                      <strong>Full Name:</strong> {userInfo.first_name}{" "}
+                      {userInfo.last_name}
+                    </Typography>
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <WorkIcon color="primary" />
+                    <Typography>
+                      <strong>Role:</strong> {userInfo.role}
+                    </Typography>
+                  </div>
                 </div>
               )}
             </Box>
