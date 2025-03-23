@@ -1,63 +1,15 @@
-from http.client import responses
-
-from httpx import request
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
-from fastapi.testclient import TestClient
 from starlette import status
-import pytest
-from models import ToDoModel
 import sys
 import os
 
 # Add the ToDos directory to the sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from database import base
-from main import app
+from .utils import *
 from routers.todos import get_db, get_current_user
-
-TEST_SQL_ALCHEMY_DATABASE_URL = "sqlite:///./testdb.db"
-
-engine = create_engine(TEST_SQL_ALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool)
-
-TestingSessionLocal = sessionmaker(autoflush=False, autocommit=False, bind=engine)
-
-base.metadata.create_all(bind=engine)
-
-def override_get_db():
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-def override_get_current_user():
-    return {"username": 'admin', "user_id": 1, "user_role": "admin"}
 
 app.dependency_overrides[get_db] = override_get_db
 app.dependency_overrides[get_current_user] = override_get_current_user
-
-client = TestClient(app)
-
-@pytest.fixture
-def test_todo():
-    todo = ToDoModel(
-        title="Learn to code",
-        description = "Need to learn everyday",
-        priority = 3,
-        complete = False,
-        owner_id = 1
-    )
-
-    db = TestingSessionLocal()
-    db.add(todo)
-    db.commit()
-    yield db
-    with engine.connect() as connection:
-        connection.execute(text("DELETE FROM todos;"))
-        connection.commit()
 
 def test_read_all_authenticated(test_todo):
     response = client.get("/")
