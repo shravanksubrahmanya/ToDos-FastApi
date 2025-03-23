@@ -11,8 +11,9 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from database import base
-from models import ToDoModel
+from models import ToDoModel, Users
 from main import app
+from routers.auth import bcrypt_context
 
 TEST_SQL_ALCHEMY_DATABASE_URL = "sqlite:///./testdb.db"
 
@@ -50,4 +51,23 @@ def test_todo():
     yield db
     with engine.connect() as connection:
         connection.execute(text("DELETE FROM todos;"))
+        connection.commit()
+
+@pytest.fixture
+def test_user():
+    user = Users(
+        username="admin",
+        email="admin@admin.com",
+        first_name="admin",
+        last_name="admin",
+        hashed_password = bcrypt_context.hash("testpassword"),
+        role="admin",
+    )
+
+    db = TestingSessionLocal()
+    db.add(user)
+    db.commit()
+    yield user
+    with engine.connect() as connection:
+        connection.execute(text("DELETE FROM USERS;"))
         connection.commit()
