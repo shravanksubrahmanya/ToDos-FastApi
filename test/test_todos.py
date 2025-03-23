@@ -1,10 +1,3 @@
-from starlette import status
-import sys
-import os
-
-# Add the ToDos directory to the sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from .utils import *
 from routers.todos import get_db, get_current_user
 

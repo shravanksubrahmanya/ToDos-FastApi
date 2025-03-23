@@ -2,11 +2,18 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from fastapi.testclient import TestClient
+from starlette import status
 import pytest
+import sys
+import os
+
+# Add the ToDos directory to the sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from database import base
 from models import ToDoModel
 from main import app
+
 
 TEST_SQL_ALCHEMY_DATABASE_URL = "sqlite:///./testdb.db"
 
